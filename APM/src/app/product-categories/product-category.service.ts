@@ -1,13 +1,23 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 import { throwError } from 'rxjs';
+
+import { ProductCategory } from './product-category';
+import { catchError, tap, shareReplay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SupplierService {
-  suppliersUrl = 'api/suppliers';
+export class ProductCategoryService {
+  private productCategoriesUrl = 'api/productCategories';
+
+  productCategories$ = this.http.get<ProductCategory[]>(this.productCategoriesUrl)
+    .pipe(
+      tap(data => console.log('category', JSON.stringify(data))),
+      shareReplay(1),
+      catchError(this .handleError)
+    );
 
   constructor(private http: HttpClient) { }
 
@@ -26,5 +36,4 @@ export class SupplierService {
     console.error(err);
     return throwError(errorMessage);
   }
-
 }
